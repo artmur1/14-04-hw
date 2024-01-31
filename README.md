@@ -43,6 +43,8 @@
 
 ### Решение 2
 
+Столбец title имеет наибольшее среднее значение размера элементов в байтах.
+
     select * from pg_stats where tablename = 'orders' and attname = 'title';
 
 ![alt text](https://github.com/artmur1/14-04-hw/blob/main/14-04-hw-2-1.png)

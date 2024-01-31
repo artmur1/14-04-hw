@@ -18,7 +18,11 @@
 
 ### Решение 1
 
-![alt text]()
+    \l+ - показать список БД
+    \conninfo - подключения к БД,
+    \dt+ - показать список таблиц в БД
+    \dS+ - вывода описания содержимого таблиц,
+    \q - выход из psql
 
 ## Задача 2
 
@@ -39,7 +43,9 @@
 
 ### Решение 2
 
+    select * from pg_stats where tablename = 'orders' and attname = 'title';
 
+![alt text](https://github.com/artmur1/14-04-hw/blob/main/14-04-hw-2-1.png)
 
 ## Задача 3
 
@@ -53,7 +59,18 @@
 
 ### Решение 3
 
+SQL-транзакция для разбиение таблицы orders на 2
 
+    BEGIN;
+    CREATE TABLE orders_1 AS SELECT * FROM orders;
+    DELETE FROM orders_1 WHERE true;
+    CREATE TABLE orders_2 AS SELECT * FROM orders;
+    DELETE FROM orders_2 WHERE true;
+    INSERT INTO orders_1  SELECT * FROM orders where price > 499;
+    INSERT INTO orders_2  SELECT * FROM orders where price <= 499;
+    COMMIT;
+
+Можно создать разделы, в которые в зависимости от цены будут записываться данные. В первый раздел запишем price<=499, во второй с price>499 до price<=999 и тд. Для создания разделов мы можем использовать встроенную поддержку секционирования в PostgreSQL.
 
 ## Задача 4
 
@@ -63,7 +80,15 @@
 
 ### Решение 4
 
+    pg_dump -d test_database -U user -h 192.168.1.124 -p 25432 > /tmp/test_database.dump
 
+Чтобы добавить уникальность значения столбца `title` для таблиц `test_database` можно использовать Unique constraint.
+
+    CREATE TABLE public.orders (
+        id integer NOT NULL,
+        title character varying(80) NOT NULL UNIQUE,
+        price integer DEFAULT 0
+    );
 
 ---
 
